@@ -59,7 +59,7 @@ void PlayerCharacterManager::FixedUpdate(seconds dt)
         auto dir = Vec2f::up;
         dir = dir.Rotate(-(playerBody.rotation + playerBody.angularVelocity * dt.count()));
 
-        const auto acceleration = ((down ? -1.0f : 0.0f) + (up ? 1.0f : 0.0f)) * dir;
+        const auto acceleration = ((down ? -10.0f : 0.0f) + (up ? 10.0f : 0.0f)) * dir;
 
 
         playerBody.velocity += acceleration * dt.count();
