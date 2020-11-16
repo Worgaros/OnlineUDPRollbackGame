@@ -30,12 +30,15 @@ void Server::ReceivePacket(std::unique_ptr<asteroid::Packet> packet)
         {
             auto startGamePacket = std::make_unique<asteroid::StartGamePacket>();
             startGamePacket->packetType = asteroid::PacketType::START_GAME;
+            auto spawnBallPacket = std::make_unique<asteroid::SpawnBallPacket>();
+            spawnBallPacket->packetType = asteroid::PacketType::SPAWN_BALL;
             using namespace std::chrono;
             unsigned long ms = (duration_cast<milliseconds>(
                 system_clock::now().time_since_epoch()
                 ) + milliseconds(3000)).count();
             startGamePacket->startTime = ConvertToBinary(ms);
             SendReliablePacket(std::move(startGamePacket));
+            SendReliablePacket(std::move(spawnBallPacket));
         }
 
         break;

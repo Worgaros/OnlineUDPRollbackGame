@@ -60,6 +60,8 @@ const std::array<Vec2f, std::max(4u, maxPlayerNmb)> spawnPositions
         Vec2f(-1,0),
 };
 
+const Vec2f ballSpawnPosition = Vec2f(0.f, 0.f);
+
 const std::array<degree_t, std::max(4u, maxPlayerNmb)> spawnRotations{
     degree_t(-180.0f),
     degree_t(0.0f),
@@ -74,6 +76,7 @@ enum class ComponentType : EntityMask
     ASTEROID = static_cast<EntityMask>(neko::ComponentType::OTHER_TYPE) << 2u,
     PLAYER_INPUT = static_cast<EntityMask>(neko::ComponentType::OTHER_TYPE) << 3u,
     DESTROYED = static_cast<EntityMask>(neko::ComponentType::OTHER_TYPE) << 4u,
+    BALL = static_cast<EntityMask>(neko::ComponentType::OTHER_TYPE) << 5u,
 };
 
 namespace PlayerInput

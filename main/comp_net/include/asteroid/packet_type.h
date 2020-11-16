@@ -37,6 +37,7 @@ enum class PacketType : std::uint8_t
 {
     JOIN = 0u,
     SPAWN_PLAYER,
+	SPAWN_BALL,
     INPUT,
     SPAWN_BULLET,
     VALIDATE_STATE,
@@ -143,6 +144,11 @@ struct SpawnPlayerPacket : TypedPacket<PacketType::SPAWN_PLAYER>
     std::array<std::uint8_t, sizeof(degree_t)> angle{};
 };
 
+struct SpawnBallPacket : TypedPacket<PacketType::SPAWN_BALL>
+{
+    std::array<std::uint8_t, sizeof(Vec2f)> pos{};
+};
+
 inline sf::Packet& operator<<(sf::Packet& packet, const SpawnPlayerPacket& spawnPlayerPacket)
 {
     return packet << spawnPlayerPacket.clientId << spawnPlayerPacket.playerNumber <<
@@ -153,6 +159,16 @@ inline sf::Packet& operator>>(sf::Packet& packet, SpawnPlayerPacket& spawnPlayer
 {
     return packet >> spawnPlayerPacket.clientId >> spawnPlayerPacket.playerNumber >>
         spawnPlayerPacket.pos >> spawnPlayerPacket.angle;
+}
+
+inline sf::Packet& operator<<(sf::Packet& packet, const SpawnBallPacket& spawnBallPacket)
+{
+    return packet << spawnBallPacket.pos;
+}
+
+inline sf::Packet& operator>>(sf::Packet& packet, SpawnBallPacket& spawnBallPacket)
+{
+    return packet >> spawnBallPacket.pos;
 }
 
 //
@@ -244,6 +260,12 @@ inline void GeneratePacket(sf::Packet& packet, asteroid::Packet& sendingPacket)
         packet << packetTmp;
         break;
     }
+    case PacketType::SPAWN_BALL:
+    {
+        auto& packetTmp = static_cast<SpawnBallPacket&>(sendingPacket);
+        packet << packetTmp;
+        break;
+    }
     case PacketType::INPUT:
     {
         auto& packetTmp = static_cast<PlayerInputPacket&>(sendingPacket);
@@ -297,6 +319,13 @@ inline std::unique_ptr<Packet> GenerateReceivedPacket(sf::Packet& packet)
         spawnPlayerPacket->packetType = packetTmp.packetType;
         packet >> *spawnPlayerPacket;
         return spawnPlayerPacket;
+    }
+    case PacketType::SPAWN_BALL:
+    {
+        auto spawnBallPacket = std::make_unique<SpawnBallPacket>();
+        spawnBallPacket->packetType = packetTmp.packetType;
+        packet >> *spawnBallPacket;
+        return spawnBallPacket;
     }
     case PacketType::INPUT:
     {

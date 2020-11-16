@@ -26,6 +26,14 @@ void Client::ReceivePacket(const asteroid::Packet* packet)
         gameManager_.SpawnPlayer(playerNumber, pos, rotation);
         break;
     }
+    case asteroid::PacketType::SPAWN_BALL:
+    {
+        const auto* spawnBallPacket = static_cast<const asteroid::SpawnBallPacket*>(packet);
+        const auto pos = ConvertFromBinary<Vec2f>(spawnBallPacket->pos);
+
+        gameManager_.SpawnBall(pos);
+        break;
+    }
     case asteroid::PacketType::START_GAME:
     {
         const auto* startGamePacket = static_cast<const asteroid::StartGamePacket*>(packet);

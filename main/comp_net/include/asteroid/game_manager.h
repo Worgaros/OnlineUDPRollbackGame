@@ -47,6 +47,7 @@ public:
 	void Update(seconds dt) override;
 	void Destroy() override;
 	virtual void SpawnPlayer(net::PlayerNumber playerNumber, Vec2f position, degree_t rotation);
+	virtual Entity SpawnBall(Vec2f position);
 	virtual Entity SpawnBullet(net::PlayerNumber, Vec2f position, Vec2f velocity);
 	virtual void DestroyBullet(Entity entity);
 	[[nodiscard]] Entity GetEntityFromPlayerNumber(net::PlayerNumber playerNumber) const;
@@ -92,6 +93,7 @@ public:
 	void SetClientPlayer(net::PlayerNumber clientPlayer) { clientPlayer_ = clientPlayer; }
 	[[nodiscard]] const Camera2D& GetCamera() const { return camera_; }
 	void SpawnPlayer(net::PlayerNumber playerNumber, Vec2f position, degree_t rotation) override;
+	Entity SpawnBall(Vec2f position) override;
 	Entity SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity) override;
 	void FixedUpdate();
 	void SetPlayerInput(net::PlayerNumber playerNumber, net::PlayerInput playerInput, std::uint32_t inputFrame) override;
@@ -114,6 +116,7 @@ protected:
 
     TextureId shipTextureId_ = INVALID_TEXTURE_ID;
     TextureId bulletTextureId_ = INVALID_TEXTURE_ID;
+	TextureId ballTextureId_ = INVALID_TEXTURE_ID;
     FontId fontId_ = INVALID_FONT_ID;
     std::mutex renderMutex_;
 };

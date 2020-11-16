@@ -23,6 +23,7 @@
  */
 #include "asteroid/physics_manager.h"
 #include "asteroid/game.h"
+#include "engine/log.h"
 
 namespace neko::asteroid
 {
@@ -49,12 +50,9 @@ void PhysicsManager::FixedUpdate(seconds dt)
             continue;
         auto body = bodyManager_.GetComponent(entity);
         body.position += body.velocity * dt.count();
-        if (body.velocity.x > 0.1) { body.velocity.x -= 1 * dt.count(); }
-        if (body.velocity.y > 0.1) { body.velocity.y -= 1 * dt.count(); }
-        if (body.velocity.x < -0.1) { body.velocity.x += 1 * dt.count(); }
-        if (body.velocity.y < -0.1) { body.velocity.y += 1 * dt.count(); }
-        if (body.velocity.x < 0.1 && body.velocity.x > -0.1) { body.velocity.x = 0 * dt.count(); }
-        if (body.velocity.y < 0.1 && body.velocity.y > -0.1) { body.velocity.y = 0 * dt.count(); }
+        if (body.velocity.Magnitude() > 0.1) { body.velocity -= body.velocity.Normalized() * dt.count(); }
+        if (body.velocity.Magnitude() < -0.1) { body.velocity += body.velocity.Normalized() * dt.count(); }
+        if (body.velocity.Magnitude() < 0.1 && body.velocity.Magnitude() > -0.1) { body.velocity = Vec2f::zero * dt.count(); }
         body.rotation += body.angularVelocity * dt.count();
         bodyManager_.SetComponent(entity, body);
     }

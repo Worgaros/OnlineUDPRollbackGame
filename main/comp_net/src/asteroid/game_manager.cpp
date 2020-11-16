@@ -69,6 +69,21 @@ void GameManager::SpawnPlayer(net::PlayerNumber playerNumber, Vec2f position, de
     rollbackManager_.SpawnPlayer(playerNumber, entity, position, degree_t(rotation));
 }
 
+Entity GameManager::SpawnBall(Vec2f position)
+{
+    //if (GetEntityFromPlayerNumber(playerNumber) != INVALID_ENTITY)
+    //    return;
+    //logDebug("[GameManager] Spawning new player");
+    //const auto entity = entityManager_.CreateEntity(playerNumber);
+    //entityMap_[playerNumber] = entity;
+    const Entity entity = entityManager_.CreateEntity();
+    entityManager_.AddComponentType(entity, static_cast<EntityMask>(ComponentType::BALL));
+    transformManager_.AddComponent(entity);
+    transformManager_.SetPosition(entity, position);
+    rollbackManager_.SpawnBall(entity,position);
+    return entity;
+}
+
 Entity GameManager::GetEntityFromPlayerNumber(net::PlayerNumber playerNumber) const
 {
     return entityMap_[playerNumber];
@@ -308,6 +323,23 @@ void ClientGameManager::SpawnPlayer(net::PlayerNumber playerNumber, Vec2f positi
     auto sprite = spriteManager_.GetComponent(entity);
     sprite.color = playerColors[playerNumber];
     spriteManager_.SetComponent(entity, sprite);
+
+}
+
+Entity ClientGameManager::SpawnBall(Vec2f position)
+{
+    logDebug("Spawn ball");
+    const auto entity = GameManager::SpawnBall(position);
+    const auto& config = BasicEngine::GetInstance()->config;
+    if (ballTextureId_ == INVALID_TEXTURE_ID)
+    {
+        ballTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/ball.png");
+    }
+    spriteManager_.AddComponent(entity);
+    spriteManager_.SetTexture(entity, ballTextureId_);
+    auto sprite = spriteManager_.GetComponent(entity);
+    spriteManager_.SetComponent(entity, sprite);
+    return entity;
 
 }
 

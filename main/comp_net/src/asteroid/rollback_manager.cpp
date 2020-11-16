@@ -306,6 +306,29 @@ void RollbackManager::SpawnPlayer(net::PlayerNumber playerNumber, Entity entity,
     currentTransformManager_.SetRotation(entity, rotation);
 }
 
+void RollbackManager::SpawnBall(Entity entity, Vec2f position)
+{
+    Body ballBody;
+    ballBody.position = position;
+    Box ballBox;
+    ballBox.extends = Vec2f::one * 0.5f;
+
+    currentPhysicsManager_.AddBody(entity);
+    currentPhysicsManager_.SetBody(entity, ballBody);
+    currentPhysicsManager_.AddBox(entity);
+    currentPhysicsManager_.SetBox(entity, ballBox);
+
+    lastValidatePhysicsManager_.AddBody(entity);
+    lastValidatePhysicsManager_.SetBody(entity, ballBody);
+    lastValidatePhysicsManager_.AddBox(entity);
+    lastValidatePhysicsManager_.SetBox(entity, ballBox);
+
+    currentTransformManager_.AddComponent(entity);
+    currentTransformManager_.SetPosition(entity, position);
+    currentTransformManager_.SetRotation(entity, degree_t(0.0f));
+    currentTransformManager_.UpdateDirtyComponent(entity);
+}
+
 net::PlayerInput RollbackManager::GetInputAtFrame(net::PlayerNumber playerNumber, net::Frame frame)
 {
     neko_assert(currentFrame_ - frame <= inputs_[playerNumber].size(),
