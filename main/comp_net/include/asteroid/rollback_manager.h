@@ -29,6 +29,7 @@
 #include "asteroid/physics_manager.h"
 #include "player_character.h"
 #include "bullet_manager.h"
+#include "ball_manager.h"
 
 namespace neko::asteroid
 {
@@ -91,9 +92,11 @@ private:
     PhysicsManager currentPhysicsManager_;
     PlayerCharacterManager currentPlayerManager_;
     BulletManager currentBulletManager_;
+    BallManager currentBallManager_;
     PhysicsManager lastValidatePhysicsManager_;
     PlayerCharacterManager lastValidatePlayerManager_;
     BulletManager lastValidateBulletManager_;
+    BallManager lastValidateBallManager_;
 
 
     net::Frame lastValidateFrame_ = 0;

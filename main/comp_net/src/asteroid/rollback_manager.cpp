@@ -38,8 +38,10 @@ RollbackManager::RollbackManager(GameManager& gameManager, EntityManager& entity
     currentTransformManager_(entityManager),
     currentPhysicsManager_(entityManager), currentPlayerManager_(entityManager, currentPhysicsManager_, gameManager_),
     currentBulletManager_(entityManager, gameManager),
+    currentBallManager_(entityManager, gameManager),
     lastValidatePhysicsManager_(entityManager),
-    lastValidatePlayerManager_(entityManager, lastValidatePhysicsManager_, gameManager_), lastValidateBulletManager_(entityManager, gameManager)
+    lastValidatePlayerManager_(entityManager, lastValidatePhysicsManager_, gameManager_), lastValidateBulletManager_(entityManager, gameManager),
+	lastValidateBallManager_(entityManager, gameManager_)
 {
     for (auto& input : inputs_)
     {
@@ -76,6 +78,7 @@ void RollbackManager::SimulateToCurrentFrame()
     createdEntities_.clear();
     //Revert the current game state to the last validated game state
     currentBulletManager_ = lastValidateBulletManager_;
+    currentBallManager_ = lastValidateBallManager_;
     currentPhysicsManager_ = lastValidatePhysicsManager_;
     currentPlayerManager_ = lastValidatePlayerManager_;
 
@@ -93,6 +96,7 @@ void RollbackManager::SimulateToCurrentFrame()
         }
         //Simulate one frame of the game
         currentBulletManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
+        currentBallManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPlayerManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPhysicsManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
     }
@@ -188,6 +192,7 @@ void RollbackManager::ValidateFrame(net::Frame newValidateFrame)
     }
     //We use the current game state as the temporary new validate game state
     currentBulletManager_ = lastValidateBulletManager_;
+    currentBallManager_ = lastValidateBallManager_;
     currentPhysicsManager_ = lastValidatePhysicsManager_;
     currentPlayerManager_ = lastValidatePlayerManager_;
 
@@ -206,6 +211,7 @@ void RollbackManager::ValidateFrame(net::Frame newValidateFrame)
         }
         //We simulate one frame
         currentBulletManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
+        currentBallManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPlayerManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPhysicsManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
     }
@@ -219,6 +225,7 @@ void RollbackManager::ValidateFrame(net::Frame newValidateFrame)
     }
     //Copy back the new validate game state to the last validated game state
     lastValidateBulletManager_ = currentBulletManager_;
+    lastValidateBallManager_ = currentBallManager_;
     lastValidatePlayerManager_ = currentPlayerManager_;
     lastValidatePhysicsManager_ = currentPhysicsManager_;
     lastValidateFrame_ = newValidateFrame;
@@ -338,36 +345,25 @@ net::PlayerInput RollbackManager::GetInputAtFrame(net::PlayerNumber playerNumber
 
 void RollbackManager::OnCollision(Entity entity1, Entity entity2)
 {
-    std::function<void(const PlayerCharacter&, Entity, const Bullet&, Entity)> ManageCollision =
-        [this](const auto& player, auto playerEntity, const auto& bullet, auto bulletEntity)
+    std::function<void(const PlayerCharacter&, Entity, const Ball&, Entity)> ManageCollision =
+        [this](const auto& player, auto playerEntity, const auto& ball, auto bulletEntity)
     {
-        if (player.playerNumber != bullet.playerNumber)
-        {
-            gameManager_.DestroyBullet(bulletEntity);
-            //lower health point
-            auto playerCharacter = currentPlayerManager_.GetComponent(playerEntity);
-            if (playerCharacter.invincibilityTime <= 0.0f)
-            {
-                playerCharacter.health--;
-                playerCharacter.invincibilityTime = playerInvincibilityPeriod;
-            }
-            currentPlayerManager_.SetComponent(playerEntity, playerCharacter);
-        }
+        logDebug("collision");
     };
     if (entityManager_.HasComponent(entity1, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
-        entityManager_.HasComponent(entity2, EntityMask(ComponentType::BULLET)))
+        entityManager_.HasComponent(entity2, EntityMask(ComponentType::BALL)))
     {
         const auto& player = currentPlayerManager_.GetComponent(entity1);
-        const auto& bullet = currentBulletManager_.GetComponent(entity2);
-        ManageCollision(player, entity1, bullet, entity2);
+        const auto& ball = currentBallManager_.GetComponent(entity2);
+        ManageCollision(player, entity1, ball, entity2);
 
     }
     if (entityManager_.HasComponent(entity2, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
-        entityManager_.HasComponent(entity1, EntityMask(ComponentType::BULLET)))
+        entityManager_.HasComponent(entity1, EntityMask(ComponentType::BALL)))
     {
         const auto& player = currentPlayerManager_.GetComponent(entity2);
-        const auto& bullet = currentBulletManager_.GetComponent(entity1);
-        ManageCollision(player, entity2, bullet, entity1);
+        const auto& ball = currentBallManager_.GetComponent(entity1);
+        ManageCollision(player, entity2, ball, entity1);
     }
 }
 
