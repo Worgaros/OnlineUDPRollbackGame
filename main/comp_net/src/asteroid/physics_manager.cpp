@@ -76,6 +76,8 @@ void PhysicsManager::FixedUpdate(seconds dt)
             const Body& body2 = bodyManager_.GetComponent(otherEntity);
             const Box& box2 = boxManager_.GetComponent(otherEntity);
 
+            
+
             if(Box2Box(
                 body1.position.x - box1.extends.x, 
                 body1.position.y - box1.extends.y,
@@ -86,7 +88,33 @@ void PhysicsManager::FixedUpdate(seconds dt)
                 box2.extends.x * 2.0f,
                 box2.extends.y * 2.0f))
             {
-                onCollisionAction_.Execute(entity, otherEntity);
+            	// gestion de collision
+                std::pair<Entity, Entity> pair (entity, otherEntity);
+                bool isAlreadyCollision = false;
+            	
+                for (int i = 0; i < collisions_.size(); i++)
+                {
+                    if (std::pair<Entity, Entity>(entity, otherEntity) == collisions_[i] || std::pair<Entity, Entity>(otherEntity, entity) == collisions_[i])
+                    {
+                        isAlreadyCollision = true;
+                        break;
+                    }
+                }
+            	if (!isAlreadyCollision)
+            	{
+                    //collisions_.push_back(pair);
+					onCollisionAction_.Execute(entity, otherEntity);
+            	}
+            }
+            else
+            {
+	            for(int i = 0; i < collisions_.size(); i++)
+	            {
+		            if(std::pair<Entity, Entity>(entity, otherEntity) == collisions_[i] || std::pair<Entity, Entity>(otherEntity, entity) == collisions_[i])
+		            {
+                        collisions_.erase(collisions_.begin() + i);
+		            }
+	            }
             }
 
         }

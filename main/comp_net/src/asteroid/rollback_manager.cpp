@@ -346,9 +346,25 @@ net::PlayerInput RollbackManager::GetInputAtFrame(net::PlayerNumber playerNumber
 void RollbackManager::OnCollision(Entity entity1, Entity entity2)
 {
     std::function<void(const PlayerCharacter&, Entity, const Ball&, Entity)> ManageCollision =
-        [this](const auto& player, auto playerEntity, const auto& ball, auto bulletEntity)
+        [this](const auto& player, auto playerEntity, const auto& ball, auto ballEntity)
     {
         logDebug("collision");
+        Body ballBody = currentPhysicsManager_.GetBody(ballEntity);
+        Body playerBody = currentPhysicsManager_.GetBody(playerEntity);
+        	
+        if (Vec2f::Dot(ballBody.position - playerBody.position, ballBody.velocity) < 0) //si balle va vers voiture -> stop balle
+        {
+            ballBody.velocity = Vec2f::zero;
+        }
+        else
+        {
+            if (ballBody.velocity.Magnitude() < playerBody.velocity.Magnitude())//sinon si la balle va moins vite que la voiture -> balle va a la meme vitesse que la voiture
+            {
+                ballBody.velocity = playerBody.velocity * 1.2f;
+            }
+        }
+        
+        currentPhysicsManager_.SetBody(ballEntity, ballBody);
     };
     if (entityManager_.HasComponent(entity1, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
         entityManager_.HasComponent(entity2, EntityMask(ComponentType::BALL)))
