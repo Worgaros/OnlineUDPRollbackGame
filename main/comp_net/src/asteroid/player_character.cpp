@@ -52,7 +52,7 @@ void PlayerCharacterManager::FixedUpdate(seconds dt)
         const bool up = input & PlayerInput::UP;
         const bool down = input & PlayerInput::DOWN;
 
-        const auto angularVelocity = ((left ? 1.0f : 0.0f) + (right ? -1.0f : 0.0f)) * playerAngularSpeed;
+        const auto angularVelocity = ((left ? 0.5f : 0.0f) + (right ? -0.5f : 0.0f)) * playerAngularSpeed;
 
         playerBody.angularVelocity = angularVelocity;
 

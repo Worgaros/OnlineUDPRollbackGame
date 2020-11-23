@@ -53,7 +53,8 @@ void PhysicsManager::FixedUpdate(seconds dt)
         if (body.velocity.Magnitude() > 0.1) { body.velocity -= body.velocity.Normalized() * dt.count(); }
         if (body.velocity.Magnitude() < -0.1) { body.velocity += body.velocity.Normalized() * dt.count(); }
         if (body.velocity.Magnitude() < 0.1 && body.velocity.Magnitude() > -0.1) { body.velocity = Vec2f::zero * dt.count(); }
-        body.rotation += body.angularVelocity * dt.count();
+    	if (body.velocity.Magnitude() > 0.1 || body.velocity.Magnitude() < -0.1){body.rotation += body.angularVelocity * dt.count();}
+        
         bodyManager_.SetComponent(entity, body);
     }
     for (Entity entity = 0; entity < entityManager_.get().GetEntitiesSize(); entity++)

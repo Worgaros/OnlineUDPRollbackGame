@@ -358,7 +358,7 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
         }
         else
         {
-            if (ballBody.velocity.Magnitude() < playerBody.velocity.Magnitude())//sinon si la balle va moins vite que la voiture -> balle va a la meme vitesse que la voiture
+            if (ballBody.velocity.Magnitude() < playerBody.velocity.Magnitude()) //sinon si la balle va moins vite que la voiture -> balle va a la meme vitesse que la voiture
             {
                 ballBody.velocity = playerBody.velocity * 1.2f;
             }
