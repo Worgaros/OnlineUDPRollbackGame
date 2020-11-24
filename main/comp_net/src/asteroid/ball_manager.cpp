@@ -39,6 +39,30 @@ BallManager& BallManager::operator=(const BallManager& ballManager)
     return *this;
 }
 
+void BallManager::RespawnPlayers()
+{
+	for (Entity playerEntity = 0; playerEntity < entityManager_.get().GetEntitiesSize(); playerEntity++)
+	{
+        if (!entityManager_.get().HasComponent(playerEntity, EntityMask(ComponentType::PLAYER_CHARACTER)))
+            continue;
+        auto playerCharacter = playerCharacterManager_.get().GetComponent(playerEntity);
+		if (playerCharacter.playerNumber == 0)
+		{
+            auto player1Body = physicsManager_.get().GetBody(playerEntity);
+            player1Body.position = spawnPositions[0];
+            player1Body.velocity = Vec2f::zero;
+            physicsManager_.get().SetBody(playerEntity, player1Body);
+		}
+        else
+        {
+            auto player2Body = physicsManager_.get().GetBody(playerEntity);
+            player2Body.position = spawnPositions[1];
+            player2Body.velocity = Vec2f::zero;
+            physicsManager_.get().SetBody(playerEntity, player2Body);
+        }
+	}
+}
+
 void BallManager::FixedUpdate(seconds dt)
 {
     for (Entity ballEntity = 0; ballEntity < entityManager_.get().GetEntitiesSize(); ballEntity++)
@@ -61,6 +85,7 @@ void BallManager::FixedUpdate(seconds dt)
                 playerCharacterManager_.get().SetComponent(gameManager_.get().GetEntityFromPlayerNumber(0), playerCharacter);
                 ballBody.position = Vec2f::zero;
                 ballBody.velocity = Vec2f::zero;
+                RespawnPlayers();
                 physicsManager_.get().SetBody(ballEntity, ballBody);
             }
             if (ballBody.position.y > 7)
@@ -70,6 +95,7 @@ void BallManager::FixedUpdate(seconds dt)
                 playerCharacterManager_.get().SetComponent(gameManager_.get().GetEntityFromPlayerNumber(1), playerCharacter);
                 ballBody.position = Vec2f::zero;
                 ballBody.velocity = Vec2f::zero;
+            	RespawnPlayers();
                 physicsManager_.get().SetBody(ballEntity, ballBody);
             }
         }

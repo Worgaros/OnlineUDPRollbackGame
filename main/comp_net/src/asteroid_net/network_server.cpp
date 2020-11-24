@@ -213,7 +213,7 @@ void ServerNetworkManager::SpawnNewPlayer(ClientId clientId, PlayerNumber player
         spawnPlayer->clientId = ConvertToBinary(clientMap_[p]);
         spawnPlayer->playerNumber = p;
 
-        const auto pos = asteroid::spawnPositions[p] * 3.0f;
+        const auto pos = asteroid::spawnPositions[p];
         spawnPlayer->pos = ConvertToBinary(pos);
 
         const auto rotation = asteroid::spawnRotations[p];

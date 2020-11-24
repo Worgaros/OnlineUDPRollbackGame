@@ -66,19 +66,20 @@ void PlayerCharacterManager::FixedUpdate(seconds dt)
 
         physicsManager_.get().SetBody(playerEntity, playerBody);
 
-        if(playerCharacter.invincibilityTime > 0.0f)
+    	//if (playerCanRespawn){}
+        /*if(playerCharacter.invincibilityTime > 0.0f)
         {
             playerCharacter.invincibilityTime -= dt.count();
             SetComponent(playerEntity, playerCharacter);
-        }
+        }*/
         //Check if cannot shoot, and increase shootingTime
-        if(playerCharacter.shootingTime < playerShootingPeriod)
+        /*if(playerCharacter.shootingTime < playerShootingPeriod)
         {
             playerCharacter.shootingTime += dt.count();
             SetComponent(playerEntity, playerCharacter);
-        }
+        }*/
         //Shooting mechanism
-        if (playerCharacter.shootingTime >= playerShootingPeriod)
+        /*if (playerCharacter.shootingTime >= playerShootingPeriod)
         {
             if(input & PlayerInput::SHOOT)
             {
@@ -93,7 +94,7 @@ void PlayerCharacterManager::FixedUpdate(seconds dt)
                 playerCharacter.shootingTime = 0.0f;
                 SetComponent(playerEntity, playerCharacter);
             }
-        }
+        }*/
     }
 }
 

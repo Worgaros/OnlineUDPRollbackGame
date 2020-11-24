@@ -48,7 +48,7 @@ public:
 	void Destroy() override;
 	virtual void SpawnPlayer(net::PlayerNumber playerNumber, Vec2f position, degree_t rotation);
 	virtual Entity SpawnBall(Vec2f position);
-	virtual Entity SpawnBullet(net::PlayerNumber, Vec2f position, Vec2f velocity);
+	//virtual Entity SpawnBullet(net::PlayerNumber, Vec2f position, Vec2f velocity);
 	virtual void DestroyBullet(Entity entity);
 	[[nodiscard]] Entity GetEntityFromPlayerNumber(net::PlayerNumber playerNumber) const;
 	[[nodiscard]] net::Frame GetCurrentFrame() const { return currentFrame_; }
@@ -94,7 +94,7 @@ public:
 	[[nodiscard]] const Camera2D& GetCamera() const { return camera_; }
 	void SpawnPlayer(net::PlayerNumber playerNumber, Vec2f position, degree_t rotation) override;
 	Entity SpawnBall(Vec2f position) override;
-	Entity SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity) override;
+	//Entity SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity) override;
 	void FixedUpdate();
 	void SetPlayerInput(net::PlayerNumber playerNumber, net::PlayerInput playerInput, std::uint32_t inputFrame) override;
     void DrawImGui() override;

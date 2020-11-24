@@ -110,7 +110,7 @@ void GameManager::Validate(net::Frame newValidateFrame)
     rollbackManager_.ValidateFrame(newValidateFrame);
 }
 
-Entity GameManager::SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity)
+/*Entity GameManager::SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity)
 {
     const Entity entity = entityManager_.CreateEntity();
     entityManager_.AddComponentType(entity, static_cast<EntityMask>(ComponentType::BULLET));
@@ -121,7 +121,7 @@ Entity GameManager::SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, 
     transformManager_.UpdateDirtyComponent(entity);
     rollbackManager_.SpawnBullet(playerNumber, entity, position, velocity);
     return entity;
-}
+}*/
 
 void GameManager::DestroyBullet(Entity entity)
 {
@@ -343,7 +343,7 @@ Entity ClientGameManager::SpawnBall(Vec2f position)
 
 }
 
-Entity ClientGameManager::SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity)
+/*Entity ClientGameManager::SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity)
 {
     const auto entity = GameManager::SpawnBullet(playerNumber, position, velocity);
     const auto& config = BasicEngine::GetInstance()->config;
@@ -357,7 +357,7 @@ Entity ClientGameManager::SpawnBullet(net::PlayerNumber playerNumber, Vec2f posi
     sprite.color = playerColors[playerNumber];
     spriteManager_.SetComponent(entity, sprite);
     return entity;
-}
+}*/
 
 
 void ClientGameManager::FixedUpdate()

@@ -383,7 +383,7 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
     }
 }
 
-void RollbackManager::SpawnBullet(net::PlayerNumber playerNumber, Entity entity, Vec2f position, Vec2f velocity)
+/*void RollbackManager::SpawnBullet(net::PlayerNumber playerNumber, Entity entity, Vec2f position, Vec2f velocity)
 {
     createdEntities_.push_back({ entity, testedFrame_ });
 
@@ -406,7 +406,7 @@ void RollbackManager::SpawnBullet(net::PlayerNumber playerNumber, Entity entity,
     currentTransformManager_.SetScale(entity, Vec2f::one * bulletScale);
     currentTransformManager_.SetRotation(entity, degree_t(0.0f));
     currentTransformManager_.UpdateDirtyComponent(entity);
-}
+}*/
 
 void RollbackManager::DestroyEntity(Entity entity)
 {
