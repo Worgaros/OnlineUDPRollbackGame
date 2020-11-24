@@ -50,6 +50,7 @@ void BallManager::RespawnPlayers()
 		{
             auto player1Body = physicsManager_.get().GetBody(playerEntity);
             player1Body.position = spawnPositions[0];
+            player1Body.rotation = spawnRotations[0];
             player1Body.velocity = Vec2f::zero;
             physicsManager_.get().SetBody(playerEntity, player1Body);
 		}
@@ -57,6 +58,7 @@ void BallManager::RespawnPlayers()
         {
             auto player2Body = physicsManager_.get().GetBody(playerEntity);
             player2Body.position = spawnPositions[1];
+            player2Body.rotation = spawnRotations[1];
             player2Body.velocity = Vec2f::zero;
             physicsManager_.get().SetBody(playerEntity, player2Body);
         }
@@ -78,7 +80,7 @@ void BallManager::FixedUpdate(seconds dt)
                 physicsManager_.get().SetBody(ballEntity, ballBody);
             }
         	// goals
-            if (ballBody.position.y < -7)
+            if (ballBody.position.y > 10)
             {
                 auto playerCharacter = playerCharacterManager_.get().GetComponent(gameManager_.get().GetEntityFromPlayerNumber(0));
                 playerCharacter.health--;
@@ -88,7 +90,7 @@ void BallManager::FixedUpdate(seconds dt)
                 RespawnPlayers();
                 physicsManager_.get().SetBody(ballEntity, ballBody);
             }
-            if (ballBody.position.y > 7)
+            if (ballBody.position.y < -10)
             {
                 auto playerCharacter = playerCharacterManager_.get().GetComponent(gameManager_.get().GetEntityFromPlayerNumber(1));
                 playerCharacter.health--;

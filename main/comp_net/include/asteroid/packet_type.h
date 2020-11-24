@@ -39,7 +39,6 @@ enum class PacketType : std::uint8_t
     SPAWN_PLAYER,
 	SPAWN_BALL,
     INPUT,
-    SPAWN_BULLET,
     VALIDATE_STATE,
     START_GAME,
     JOIN_ACK,

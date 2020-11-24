@@ -50,8 +50,8 @@ void PhysicsManager::FixedUpdate(seconds dt)
             continue;
         auto body = bodyManager_.GetComponent(entity);
         body.position += body.velocity * dt.count();
-        if (body.velocity.Magnitude() > 0.1) { body.velocity -= body.velocity.Normalized() * dt.count(); }
-        if (body.velocity.Magnitude() < -0.1) { body.velocity += body.velocity.Normalized() * dt.count(); }
+        if (body.velocity.Magnitude() > 0.1) { body.velocity -= body.velocity.Normalized() * 3 * dt.count(); }
+        if (body.velocity.Magnitude() < -0.1) { body.velocity += body.velocity.Normalized() * 3 * dt.count(); }
         if (body.velocity.Magnitude() < 0.1 && body.velocity.Magnitude() > -0.1) { body.velocity = Vec2f::zero * dt.count(); }
     	if (body.velocity.Magnitude() > 0.1 || body.velocity.Magnitude() < -0.1){body.rotation += body.angularVelocity * dt.count();}
         
@@ -89,35 +89,8 @@ void PhysicsManager::FixedUpdate(seconds dt)
                 box2.extends.x * 2.0f,
                 box2.extends.y * 2.0f))
             {
-            	// gestion de collision
-                std::pair<Entity, Entity> pair (entity, otherEntity);
-                bool isAlreadyCollision = false;
-            	
-                for (int i = 0; i < collisions_.size(); i++)
-                {
-                    if (std::pair<Entity, Entity>(entity, otherEntity) == collisions_[i] || std::pair<Entity, Entity>(otherEntity, entity) == collisions_[i])
-                    {
-                        isAlreadyCollision = true;
-                        break;
-                    }
-                }
-            	if (!isAlreadyCollision)
-            	{
-                    //collisions_.push_back(pair);
-					onCollisionAction_.Execute(entity, otherEntity);
-            	}
+                onCollisionAction_.Execute(entity, otherEntity);
             }
-            else
-            {
-	            for(int i = 0; i < collisions_.size(); i++)
-	            {
-		            if(std::pair<Entity, Entity>(entity, otherEntity) == collisions_[i] || std::pair<Entity, Entity>(otherEntity, entity) == collisions_[i])
-		            {
-                        collisions_.erase(collisions_.begin() + i);
-		            }
-	            }
-            }
-
         }
     }
 }

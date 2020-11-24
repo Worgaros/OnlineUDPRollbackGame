@@ -52,7 +52,7 @@ void PlayerCharacterManager::FixedUpdate(seconds dt)
         const bool up = input & PlayerInput::UP;
         const bool down = input & PlayerInput::DOWN;
 
-        const auto angularVelocity = ((left ? 0.5f : 0.0f) + (right ? -0.5f : 0.0f)) * playerAngularSpeed;
+        const auto angularVelocity = ((left ? 0.7f : 0.0f) + (right ? -0.7f : 0.0f)) * playerAngularSpeed;
 
         playerBody.angularVelocity = angularVelocity;
 
@@ -63,38 +63,12 @@ void PlayerCharacterManager::FixedUpdate(seconds dt)
 
 
         playerBody.velocity += acceleration * dt.count();
+        if (playerBody.velocity.x > 5) { playerBody.velocity.x = 5; }
+        if (playerBody.velocity.y > 5) { playerBody.velocity.y = 5; }
+        if (playerBody.velocity.x < -5) { playerBody.velocity.x = -5; }
+        if (playerBody.velocity.y < -5) { playerBody.velocity.y = -5; }
 
         physicsManager_.get().SetBody(playerEntity, playerBody);
-
-    	//if (playerCanRespawn){}
-        /*if(playerCharacter.invincibilityTime > 0.0f)
-        {
-            playerCharacter.invincibilityTime -= dt.count();
-            SetComponent(playerEntity, playerCharacter);
-        }*/
-        //Check if cannot shoot, and increase shootingTime
-        /*if(playerCharacter.shootingTime < playerShootingPeriod)
-        {
-            playerCharacter.shootingTime += dt.count();
-            SetComponent(playerEntity, playerCharacter);
-        }*/
-        //Shooting mechanism
-        /*if (playerCharacter.shootingTime >= playerShootingPeriod)
-        {
-            if(input & PlayerInput::SHOOT)
-            {
-                const auto currentPlayerSpeed = playerBody.velocity.Magnitude();
-                const auto bulletVelocity = dir * 
-                    ((Vec2f::Dot(playerBody.velocity, dir) > 0.0f ? currentPlayerSpeed : 0.0f)
-                    + bulletSpeed);
-                const auto bulletPosition = playerBody.position + dir * 0.5f + playerBody.velocity * dt.count();
-                gameManager_.get().SpawnBullet(playerCharacter.playerNumber,
-                                               bulletPosition,
-                                               bulletVelocity);
-                playerCharacter.shootingTime = 0.0f;
-                SetComponent(playerEntity, playerCharacter);
-            }
-        }*/
     }
 }
 

@@ -138,7 +138,7 @@ void SimulationServer::SpawnNewPlayer(ClientId clientId, PlayerNumber playerNumb
     spawnPlayer->clientId = ConvertToBinary(clientId);
     spawnPlayer->playerNumber = playerNumber;
 
-    const auto pos = asteroid::spawnPositions[playerNumber] * 3.0f;
+    const auto pos = asteroid::spawnPositions[playerNumber];
     spawnPlayer->pos = ConvertToBinary(pos);
     const auto rotation = asteroid::spawnRotations[playerNumber];
     spawnPlayer->angle = ConvertToBinary(rotation);

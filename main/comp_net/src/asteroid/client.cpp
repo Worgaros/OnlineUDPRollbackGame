@@ -109,7 +109,6 @@ void Client::ReceivePacket(const asteroid::Packet* packet)
         gameManager_.WinGame(winGamePacket->winner);
         break;
     }
-    case asteroid::PacketType::SPAWN_BULLET: break;
     default:;
     }
 

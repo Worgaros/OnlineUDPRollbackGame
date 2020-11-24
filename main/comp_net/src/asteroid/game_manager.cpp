@@ -110,24 +110,6 @@ void GameManager::Validate(net::Frame newValidateFrame)
     rollbackManager_.ValidateFrame(newValidateFrame);
 }
 
-/*Entity GameManager::SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity)
-{
-    const Entity entity = entityManager_.CreateEntity();
-    entityManager_.AddComponentType(entity, static_cast<EntityMask>(ComponentType::BULLET));
-    transformManager_.AddComponent(entity);
-    transformManager_.SetPosition(entity, position);
-    transformManager_.SetScale(entity, Vec2f::one * bulletScale);
-    transformManager_.SetRotation(entity, degree_t(0.0f));
-    transformManager_.UpdateDirtyComponent(entity);
-    rollbackManager_.SpawnBullet(playerNumber, entity, position, velocity);
-    return entity;
-}*/
-
-void GameManager::DestroyBullet(Entity entity)
-{
-    rollbackManager_.DestroyEntity(entity);
-}
-
 net::PlayerNumber GameManager::CheckWinner() const
 {
     int alivePlayer = 0;
@@ -195,22 +177,7 @@ void ClientGameManager::Update(seconds dt)
             {
                 const auto& player = rollbackManager_.GetPlayerCharacterManager().GetComponent(entity);
                 auto sprite = spriteManager_.GetComponent(entity);
-                if (player.invincibilityTime > 0.0f)
-                {
-                    auto leftV = std::fmod(player.invincibilityTime, invincibilityFlashPeriod);
-                    auto rightV = invincibilityFlashPeriod / 2.0f;
-                    //logDebug(fmt::format("Comparing {} and {} with time: {}", leftV, rightV, player.invincibilityTime));
-                }
-                if (player.invincibilityTime > 0.0f &&
-                    std::fmod(player.invincibilityTime, invincibilityFlashPeriod)
-                    > invincibilityFlashPeriod / 2.0f)
-                {
-                    sprite.color = Color4(Color::black, 1.0f);
-                }
-                else
-                {
-                    sprite.color = playerColors[player.playerNumber];
-                }
+                sprite.color = playerColors[player.playerNumber];
                 spriteManager_.SetComponent(entity, sprite);
             }
 
@@ -281,14 +248,6 @@ void ClientGameManager::Update(seconds dt)
     transformManager_.Update();
 }
 
-void ClientGameManager::Destroy()
-{
-    GameManager::Destroy();
-    textureManager_.Destroy();
-    spriteManager_.Destroy();
-    fontManager_.Destroy();
-}
-
 void ClientGameManager::SetWindowSize(Vec2u windowsSize)
 {
     windowSize_ = windowsSize;
@@ -342,23 +301,6 @@ Entity ClientGameManager::SpawnBall(Vec2f position)
     return entity;
 
 }
-
-/*Entity ClientGameManager::SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity)
-{
-    const auto entity = GameManager::SpawnBullet(playerNumber, position, velocity);
-    const auto& config = BasicEngine::GetInstance()->config;
-    if (bulletTextureId_ == INVALID_TEXTURE_ID)
-    {
-        bulletTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/bullet.png");
-    }
-    spriteManager_.AddComponent(entity);
-    spriteManager_.SetTexture(entity, bulletTextureId_);
-    auto sprite = spriteManager_.GetComponent(entity);
-    sprite.color = playerColors[playerNumber];
-    spriteManager_.SetComponent(entity, sprite);
-    return entity;
-}*/
-
 
 void ClientGameManager::FixedUpdate()
 {

@@ -22,7 +22,7 @@
  SOFTWARE.
  */
 
-#pragma once
+/*#pragma once
 #include "game.h"
 #include "engine/component.h"
 #include "comp_net/type.h"
@@ -43,4 +43,4 @@ public:
 private:
     std::reference_wrapper<GameManager> gameManager_;
 };
-}
+}*/

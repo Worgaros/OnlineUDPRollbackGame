@@ -22,7 +22,7 @@
  SOFTWARE.
  */
 
-#include "asteroid/bullet_manager.h"
+/*#include "asteroid/bullet_manager.h"
 #include "asteroid/game.h"
 
 namespace neko::asteroid
@@ -47,4 +47,4 @@ void BulletManager::FixedUpdate(seconds dt)
         }
     }
 }
-}
+}*/

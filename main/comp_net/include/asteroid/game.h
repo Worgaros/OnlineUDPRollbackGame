@@ -35,13 +35,6 @@ const std::uint32_t maxPlayerNmb = 2;
 const short playerHealth = 5;
 const float playerSpeed = 1.0f;
 const degree_t playerAngularSpeed = degree_t(90.0f);
-const float playerShootingPeriod = 0.3f;
-const float bulletSpeed = 2.0f;
-const float bulletScale = 0.2f;
-const float bulletPeriod = 3.0f;
-const float playerInvincibilityPeriod = 1.5f;
-const float invincibilityFlashPeriod = 0.5f;
-//bool playerCanRespawn = false;
 
 const std::array<Color4, std::max(maxPlayerNmb, 4u)> playerColors =
 {
@@ -55,8 +48,8 @@ const std::array<Color4, std::max(maxPlayerNmb, 4u)> playerColors =
 
 const std::array<Vec2f, std::max(4u, maxPlayerNmb)> spawnPositions
 {
-        Vec2f(0,3),
-        Vec2f(0,-3),
+        Vec2f(0,9),
+        Vec2f(0,-9),
         Vec2f(1,0),
         Vec2f(-1,0),
 };

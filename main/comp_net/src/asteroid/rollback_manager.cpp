@@ -37,10 +37,9 @@ RollbackManager::RollbackManager(GameManager& gameManager, EntityManager& entity
     gameManager_(gameManager), entityManager_(entityManager),
     currentTransformManager_(entityManager),
     currentPhysicsManager_(entityManager), currentPlayerManager_(entityManager, currentPhysicsManager_, gameManager_),
-    currentBulletManager_(entityManager, gameManager),
     currentBallManager_(entityManager, gameManager, currentPhysicsManager_, currentPlayerManager_),
     lastValidatePhysicsManager_(entityManager),
-    lastValidatePlayerManager_(entityManager, lastValidatePhysicsManager_, gameManager_), lastValidateBulletManager_(entityManager, gameManager),
+    lastValidatePlayerManager_(entityManager, lastValidatePhysicsManager_, gameManager_),
 	lastValidateBallManager_(entityManager, gameManager_, lastValidatePhysicsManager_, lastValidatePlayerManager_)
 {
     for (auto& input : inputs_)
@@ -77,7 +76,6 @@ void RollbackManager::SimulateToCurrentFrame()
 
     createdEntities_.clear();
     //Revert the current game state to the last validated game state
-    currentBulletManager_ = lastValidateBulletManager_;
     currentBallManager_ = lastValidateBallManager_;
     currentPhysicsManager_ = lastValidatePhysicsManager_;
     currentPlayerManager_ = lastValidatePlayerManager_;
@@ -95,7 +93,6 @@ void RollbackManager::SimulateToCurrentFrame()
             currentPlayerManager_.SetComponent(playerEntity, playerCharacter);
         }
         //Simulate one frame of the game
-        currentBulletManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentBallManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPlayerManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPhysicsManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
@@ -191,7 +188,6 @@ void RollbackManager::ValidateFrame(net::Frame newValidateFrame)
         }
     }
     //We use the current game state as the temporary new validate game state
-    currentBulletManager_ = lastValidateBulletManager_;
     currentBallManager_ = lastValidateBallManager_;
     currentPhysicsManager_ = lastValidatePhysicsManager_;
     currentPlayerManager_ = lastValidatePlayerManager_;
@@ -210,7 +206,6 @@ void RollbackManager::ValidateFrame(net::Frame newValidateFrame)
             currentPlayerManager_.SetComponent(playerEntity, playerCharacter);
         }
         //We simulate one frame
-        currentBulletManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentBallManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPlayerManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPhysicsManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
@@ -224,7 +219,6 @@ void RollbackManager::ValidateFrame(net::Frame newValidateFrame)
         }
     }
     //Copy back the new validate game state to the last validated game state
-    lastValidateBulletManager_ = currentBulletManager_;
     lastValidateBallManager_ = currentBallManager_;
     lastValidatePlayerManager_ = currentPlayerManager_;
     lastValidatePhysicsManager_ = currentPhysicsManager_;
@@ -360,7 +354,7 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
         {
             if (ballBody.velocity.Magnitude() < playerBody.velocity.Magnitude()) //sinon si la balle va moins vite que la voiture -> balle va a la meme vitesse que la voiture
             {
-                ballBody.velocity = playerBody.velocity * 1.2f;
+                ballBody.velocity = playerBody.velocity * 1.5f;
             }
         }
         
@@ -381,44 +375,5 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
 		const auto& ball = currentBallManager_.GetComponent(entity1);
         ManageCollision(player, entity2, ball, entity1);
     }
-}
-
-/*void RollbackManager::SpawnBullet(net::PlayerNumber playerNumber, Entity entity, Vec2f position, Vec2f velocity)
-{
-    createdEntities_.push_back({ entity, testedFrame_ });
-
-    Body bulletBody;
-    bulletBody.position = position;
-    bulletBody.velocity = velocity;
-    Box bulletBox;
-    bulletBox.extends = Vec2f::one * bulletScale * 0.5f;
-
-    currentBulletManager_.AddComponent(entity);
-    currentBulletManager_.SetComponent(entity, { bulletPeriod, playerNumber });
-
-    currentPhysicsManager_.AddBody(entity);
-    currentPhysicsManager_.SetBody(entity, bulletBody);
-    currentPhysicsManager_.AddBox(entity);
-    currentPhysicsManager_.SetBox(entity, bulletBox);
-
-    currentTransformManager_.AddComponent(entity);
-    currentTransformManager_.SetPosition(entity, position);
-    currentTransformManager_.SetScale(entity, Vec2f::one * bulletScale);
-    currentTransformManager_.SetRotation(entity, degree_t(0.0f));
-    currentTransformManager_.UpdateDirtyComponent(entity);
-}*/
-
-void RollbackManager::DestroyEntity(Entity entity)
-{
-    //we don't need to save a bullet that has been created in the time window
-    if (std::find_if(createdEntities_.begin(), createdEntities_.end(), [entity](auto newEntity)
-        {
-            return newEntity.entity == entity;
-        }) != createdEntities_.end())
-    {
-        entityManager_.DestroyEntity(entity);
-        return;
-    }
-        entityManager_.AddComponentType(entity, EntityMask(ComponentType::DESTROYED));
 }
 }
