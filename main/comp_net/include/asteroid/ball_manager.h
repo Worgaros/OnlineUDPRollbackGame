@@ -26,19 +26,27 @@
 #include "game.h"
 #include "engine/component.h"
 #include "comp_net/type.h"
+#include "asteroid/player_character.h"
+#include "asteroid/physics_manager.h"
 
 namespace neko::asteroid
 {
-struct Ball
-{
-};
-class GameManager;
-class BallManager : public ComponentManager<Ball, static_cast<EntityMask>(ComponentType::BALL)>
-{
-public:
-    explicit BallManager(EntityManager& entityManager, GameManager& gameManager);
-    void FixedUpdate(seconds dt);
-private:
-    std::reference_wrapper<GameManager> gameManager_;
-};
+    struct Ball
+    {
+        float remainingTime = 0.0f;
+        float ballMaxHeight = 5.f;
+        float ballMinHeight = -5.f;
+        net::PlayerNumber playerNumber = net::INVALID_PLAYER;
+    };
+    class GameManager;
+    class BallManager : public ComponentManager<Ball, static_cast<EntityMask>(ComponentType::BALL)>
+    {
+    public:
+        explicit BallManager(EntityManager& entityManager, GameManager& gameManager, PhysicsManager& physicsManager, PlayerCharacterManager& playerCharacterManager);
+        void FixedUpdate(seconds dt);
+    private:
+        std::reference_wrapper<GameManager> gameManager_;
+        std::reference_wrapper<PhysicsManager> physicsManager_;
+        std::reference_wrapper<PlayerCharacterManager> playerCharacterManager_;
+    };
 }

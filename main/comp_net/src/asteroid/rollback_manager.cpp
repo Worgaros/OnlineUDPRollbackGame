@@ -38,10 +38,10 @@ RollbackManager::RollbackManager(GameManager& gameManager, EntityManager& entity
     currentTransformManager_(entityManager),
     currentPhysicsManager_(entityManager), currentPlayerManager_(entityManager, currentPhysicsManager_, gameManager_),
     currentBulletManager_(entityManager, gameManager),
-    currentBallManager_(entityManager, gameManager),
+    currentBallManager_(entityManager, gameManager, currentPhysicsManager_, currentPlayerManager_),
     lastValidatePhysicsManager_(entityManager),
     lastValidatePlayerManager_(entityManager, lastValidatePhysicsManager_, gameManager_), lastValidateBulletManager_(entityManager, gameManager),
-	lastValidateBallManager_(entityManager, gameManager_)
+	lastValidateBallManager_(entityManager, gameManager_, lastValidatePhysicsManager_, lastValidatePlayerManager_)
 {
     for (auto& input : inputs_)
     {

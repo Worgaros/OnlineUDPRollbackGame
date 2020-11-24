@@ -24,21 +24,48 @@
 
 #include "asteroid/ball_manager.h"
 #include "asteroid/game.h"
+#include "asteroid/game_manager.h"
 
 namespace neko::asteroid
 {
-BallManager::BallManager(EntityManager& entityManager, GameManager& gameManager) :
-    ComponentManager(entityManager), gameManager_(gameManager)
+BallManager::BallManager(EntityManager& entityManager, GameManager& gameManager, PhysicsManager& physicsManager, PlayerCharacterManager& playerCharacterManager) :
+    ComponentManager(entityManager), gameManager_(gameManager), physicsManager_(physicsManager), playerCharacterManager_(playerCharacterManager)
 {
 }
 
 void BallManager::FixedUpdate(seconds dt)
 {
-    for(Entity entity = 0; entity < entityManager_.get().GetEntitiesSize(); entity++)
+    for (Entity ballEntity = 0; ballEntity < entityManager_.get().GetEntitiesSize(); ballEntity++)
     {
-        if(entityManager_.get().HasComponent(entity, EntityMask(ComponentType::BALL)))
+        if (entityManager_.get().HasComponent(ballEntity, EntityMask(ComponentType::BALL)))
         {
-            auto& ball = components_[entity];
+            auto& ball = components_[ballEntity];
+            auto ballBody = physicsManager_.get().GetBody(ballEntity);
+            // Left and right ball max pos
+            if ((ballBody.position.x > ball.ballMaxHeight && ballBody.velocity.x > 0) || (ballBody.position.x < ball.ballMinHeight && ballBody.velocity.x < 0))
+            {
+                ballBody.velocity = Vec2f(-ballBody.velocity.x, ballBody.velocity.y);
+                physicsManager_.get().SetBody(ballEntity, ballBody);
+            }
+        	// goals
+            if (ballBody.position.y < -7)
+            {
+                auto playerCharacter = playerCharacterManager_.get().GetComponent(gameManager_.get().GetEntityFromPlayerNumber(0));
+                playerCharacter.health--;
+                playerCharacterManager_.get().SetComponent(gameManager_.get().GetEntityFromPlayerNumber(0), playerCharacter);
+                ballBody.position = Vec2f(0, 0);
+                ballBody.velocity = Vec2f().zero;
+                physicsManager_.get().SetBody(ballEntity, ballBody);
+            }
+            if (ballBody.position.y > 7)
+            {
+                auto playerCharacter = playerCharacterManager_.get().GetComponent(gameManager_.get().GetEntityFromPlayerNumber(1));
+                playerCharacter.health--;
+                playerCharacterManager_.get().SetComponent(gameManager_.get().GetEntityFromPlayerNumber(1), playerCharacter);
+                ballBody.position = Vec2f(0, 0);
+                ballBody.velocity = Vec2f().zero;
+                physicsManager_.get().SetBody(ballEntity, ballBody);
+            }
         }
     }
 }
