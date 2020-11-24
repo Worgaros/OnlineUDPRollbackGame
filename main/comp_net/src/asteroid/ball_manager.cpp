@@ -33,6 +33,12 @@ BallManager::BallManager(EntityManager& entityManager, GameManager& gameManager,
 {
 }
 
+BallManager& BallManager::operator=(const BallManager& ballManager)
+{
+    components_ = ballManager.components_;
+    return *this;
+}
+
 void BallManager::FixedUpdate(seconds dt)
 {
     for (Entity ballEntity = 0; ballEntity < entityManager_.get().GetEntitiesSize(); ballEntity++)
@@ -53,8 +59,8 @@ void BallManager::FixedUpdate(seconds dt)
                 auto playerCharacter = playerCharacterManager_.get().GetComponent(gameManager_.get().GetEntityFromPlayerNumber(0));
                 playerCharacter.health--;
                 playerCharacterManager_.get().SetComponent(gameManager_.get().GetEntityFromPlayerNumber(0), playerCharacter);
-                ballBody.position = Vec2f(0, 0);
-                ballBody.velocity = Vec2f().zero;
+                ballBody.position = Vec2f::zero;
+                ballBody.velocity = Vec2f::zero;
                 physicsManager_.get().SetBody(ballEntity, ballBody);
             }
             if (ballBody.position.y > 7)
@@ -62,8 +68,8 @@ void BallManager::FixedUpdate(seconds dt)
                 auto playerCharacter = playerCharacterManager_.get().GetComponent(gameManager_.get().GetEntityFromPlayerNumber(1));
                 playerCharacter.health--;
                 playerCharacterManager_.get().SetComponent(gameManager_.get().GetEntityFromPlayerNumber(1), playerCharacter);
-                ballBody.position = Vec2f(0, 0);
-                ballBody.velocity = Vec2f().zero;
+                ballBody.position = Vec2f::zero;
+                ballBody.velocity = Vec2f::zero;
                 physicsManager_.get().SetBody(ballEntity, ballBody);
             }
         }

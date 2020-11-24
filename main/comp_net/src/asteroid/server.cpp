@@ -39,6 +39,7 @@ void Server::ReceivePacket(std::unique_ptr<asteroid::Packet> packet)
             startGamePacket->startTime = ConvertToBinary(ms);
             SendReliablePacket(std::move(startGamePacket));
             SendReliablePacket(std::move(spawnBallPacket));
+            gameManager_.SpawnBall(Vec2f::zero);
         }
 
         break;

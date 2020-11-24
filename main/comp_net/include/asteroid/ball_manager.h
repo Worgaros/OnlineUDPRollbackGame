@@ -43,7 +43,8 @@ namespace neko::asteroid
     {
     public:
         explicit BallManager(EntityManager& entityManager, GameManager& gameManager, PhysicsManager& physicsManager, PlayerCharacterManager& playerCharacterManager);
-        void FixedUpdate(seconds dt);
+        BallManager& operator= (const BallManager&);
+    	void FixedUpdate(seconds dt);
     private:
         std::reference_wrapper<GameManager> gameManager_;
         std::reference_wrapper<PhysicsManager> physicsManager_;

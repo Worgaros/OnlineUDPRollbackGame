@@ -107,7 +107,7 @@ void RollbackManager::SimulateToCurrentFrame()
             EntityMask(neko::ComponentType::BODY2D) |
             EntityMask(neko::ComponentType::TRANSFORM2D)))
             continue;
-        const auto body = currentPhysicsManager_.GetBody(entity);
+        const auto& body = currentPhysicsManager_.GetBody(entity);
         currentTransformManager_.SetPosition(entity, body.position);
         currentTransformManager_.SetRotation(entity, body.rotation);
         currentTransformManager_.UpdateDirtyComponent(entity);
@@ -378,7 +378,7 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
         entityManager_.HasComponent(entity1, EntityMask(ComponentType::BALL)))
     {
         const auto& player = currentPlayerManager_.GetComponent(entity2);
-        const auto& ball = currentBallManager_.GetComponent(entity1);
+		const auto& ball = currentBallManager_.GetComponent(entity1);
         ManageCollision(player, entity2, ball, entity1);
     }
 }
